@@ -1,5 +1,7 @@
 ---
 import Tour from '../components/Tour.astro';
+import Test from "../components/test.jsx"
+import TicTacToe from "../components/TicTacToe/TicTacToe.jsx"
 ---
 
 <!doctype html>
@@ -19,6 +21,7 @@ import Tour from '../components/Tour.astro';
             display: flex;
             flex-direction: column;
             gap: 1em;
+            min-height:calc(100vh + 200px);
             max-width: min(100%, 68ch);
         }
     </style>
@@ -32,7 +35,7 @@ import Tour from '../components/Tour.astro';
             </div>
         </header>
 
-        <Tour />
+        <TicTacToe:idle />
     </main>
 </body>
 </html>
