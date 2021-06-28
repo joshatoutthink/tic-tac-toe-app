@@ -69,13 +69,23 @@ function TicTacToe({}){
   const [board, setBoard] = useState(()=>emptyBoard(3))
   const [currentPlayer, setCurrentPlayer] = useState(null)
   const [gameWinner, setGameWinner] = useState(null)
+
   function handlePlaceMark({x,y}){
+
+    if(board[y][x] !== ""){
+      return;
+    }
     setBoard(prev=>{
       const newBoard = [...prev]
       newBoard[y][x] = currentPlayer
       return newBoard
     })
     
+  }
+  function resetBoard(){
+    setGameWinner(null)
+    setBoard(()=>emptyBoard(3))
+    setCurrentPlayer(null)
   }
 
   useEffect(()=>{
@@ -89,19 +99,18 @@ function TicTacToe({}){
         return nextPlayer
       })
     } else{
-      const winner = gameResult == 'CAT' ? 'TIE' : gameResult;
-      setGameWinner(winner);
+      setGameWinner(gameResult);
     }
       
   }, [board, setCurrentPlayer, checkWinner])
 
 
   return <div className="board-wrapper">
-      {gameWinner && <h2>The Winner is: <span>{gameWinner}</span></h2>}
+    {gameWinner && <ShowWinner winner={gameWinner}/>}
 
-      {currentPlayer && <p>Current Player: <span>{currentPlayer=='x'?'Player 1 (X)':'Player 2 (O)'}</span></p>}
+    {currentPlayer ? <p>Current Player: <span>{currentPlayer=='x'?'Player 1 (X)':'Player 2 (O)'}</span></p> : <p>loading...</p>}
 
-      <div className="board">
+    <div className="board">
       {board.map((row,y)=>{
         return row.map((tile,x)=>{
           return <div className="tile" key={`${x},${y}`}>
@@ -110,7 +119,18 @@ function TicTacToe({}){
         })
       })}
     </div>
+    
+    <button onClick={resetBoard}>Reset Board</button>
   </div>
 }
 
 export default TicTacToe
+
+function ShowWinner({winner}){
+  if(winner=='CAT'){
+    return <h2>
+      CAT
+    </h2>
+  }
+  return <h2>The Winner is: <span>{winner=="x"?"Player 1":"Player 2"}</span></h2>
+}
