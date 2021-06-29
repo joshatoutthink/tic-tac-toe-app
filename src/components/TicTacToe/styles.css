@@ -1,6 +1,16 @@
+.board-wrapper {
+  text-align: center;
+}
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 .board {
   display: grid;
   grid-template-columns: repeat(3, minmax(1px, 1fr));
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 300px;
 }
 .tile {
   width: 100px;
