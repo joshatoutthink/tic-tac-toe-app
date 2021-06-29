@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import "./styles.css"
+import {getRobotMove} from "./robot.js"
+
 function emptyBoard(size){
   const board = []
   for(let y = 0; y < size; y++){
@@ -58,28 +60,45 @@ function checkWinner(board){
   }
 
   //Check for Tie
-
   if(getAvailableTiles(board).length===0){
     return 'CAT'
   }
 
 }
 
-function TicTacToe({}){
+const ROBOT_IS_PLAYING = false
+
+//==
+//== START OF THE REACT COMPONENT
+//==
+function TicTacToe({}) {
   const [board, setBoard] = useState(()=>emptyBoard(3))
   const [currentPlayer, setCurrentPlayer] = useState(null)
   const [gameWinner, setGameWinner] = useState(null)
 
-  function handlePlaceMark({x,y}){
-
-    if(board[y][x] !== ""){
-      return;
-    }
+  function placeMark({x,y}){
     setBoard(prev=>{
       const newBoard = [...prev]
       newBoard[y][x] = currentPlayer
       return newBoard
-    })
+    });
+  }
+
+  function isRobotsTurn(){
+    return ROBOT_IS_PLAYING && currentPlayer!=="x"
+  }
+
+  function handlePlaceMark({x,y}){
+    // if(isRobotsTurn()){
+    //   return; // robots turn
+    // }
+    if(board[y][x] !== ""){
+      return;
+    }
+    if(gameWinner){
+      return;
+    }
+    placeMark({x,y})
     
   }
   function resetBoard(){
@@ -101,14 +120,29 @@ function TicTacToe({}){
     } else{
       setGameWinner(gameResult);
     }
-      
+    
   }, [board, setCurrentPlayer, checkWinner])
 
+  useEffect(()=>{
+    if(currentPlayer!=="x" && currentPlayer !== null){
+      console.log(currentPlayer)
+      setBoard((prevBoard)=>{
+        if(!prevBoard){
+          return prevBoard
+        }
+        const newBoard = [...prevBoard]
+        const {x,y} = getRobotMove(newBoard)
+        newBoard[y][x] = currentPlayer
+        return newBoard
+      })
+    }
+      
+  },[currentPlayer])
 
   return <div className="board-wrapper">
     {gameWinner && <ShowWinner winner={gameWinner}/>}
 
-    {currentPlayer ? <p>Current Player: <span>{currentPlayer=='x'?'Player 1 (X)':'Player 2 (O)'}</span></p> : <p>loading...</p>}
+    {(!gameWinner && currentPlayer) ? <p>Current Player: <span>{currentPlayer=='x'?'Player 1 (X)':'Player 2 (O)'}</span></p> : <p></p>}
 
     <div className="board">
       {board.map((row,y)=>{
@@ -119,7 +153,7 @@ function TicTacToe({}){
         })
       })}
     </div>
-    
+
     <button onClick={resetBoard}>Reset Board</button>
   </div>
 }
