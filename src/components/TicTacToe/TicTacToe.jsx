@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import "./styles.css"
-import {getRobotMove} from "./robot.js"
+import {getRobotMove, getMinimaxRobotMove} from "./robot.js"
 
 function emptyBoard(size){
   const board = []
@@ -131,7 +131,7 @@ function TicTacToe({}) {
           return prevBoard
         }
         const newBoard = [...prevBoard]
-        const {x,y} = getRobotMove(newBoard)
+        const {x,y} = getMinimaxRobotMove(newBoard)
         newBoard[y][x] = currentPlayer
         return newBoard
       })
