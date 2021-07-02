@@ -1,7 +1,6 @@
 ---
-import Tour from '../components/Tour.astro';
-import Test from "../components/test.jsx"
 import TicTacToe from "../components/TicTacToe/TicTacToe.jsx"
+import BG from "../components/BG/BG.jsx"
 ---
 
 <!doctype html>
@@ -14,14 +13,19 @@ import TicTacToe from "../components/TicTacToe/TicTacToe.jsx"
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
     <link rel="stylesheet" href="/style/global.css">
-    <link rel="stylesheet" href="/style/home.css">
 
     <style>
         
     </style>
 </head>
 <body>
-    <main>
+    <BG:idle/>
+    <header>
+        <div>
+            <h1>Tic Tac Toe</h1>
+        </div>
+    </header>
+    <main style="position:relative">
         <TicTacToe:load />
     </main>
 </body>

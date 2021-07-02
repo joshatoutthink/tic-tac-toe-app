@@ -10,7 +10,9 @@ h2 {
   grid-template-columns: repeat(3, minmax(1px, 1fr));
   justify-content: center;
   margin: 0 auto;
-  max-width: 300px;
+  gap: 1rem;
+  max-width: 330px;
+  margin-bottom: 20px;
 }
 .tile {
   width: 100px;

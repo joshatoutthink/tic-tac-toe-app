@@ -167,7 +167,7 @@ function bestMove(board) {
       if (board[i][j] == "") {
         board[i][j] = ai;
         let score = minimax(board, 0, false);
-        console.log(score, [j, i]);
+        //console.log(score, [j, i]);//
         board[i][j] = "";
         if (score > bestScore) {
           bestScore = score;
@@ -182,6 +182,7 @@ function bestMove(board) {
 
 function minimax(board, depth, isMaximizing) {
   let result = checkWinner(board);
+  //console.log(result);
   if (result !== null) {
     return scores[result];
   }
