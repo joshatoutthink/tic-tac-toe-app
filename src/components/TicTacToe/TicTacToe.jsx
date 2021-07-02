@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { getRobotMove, getMinimaxRobotMove } from "./robot.js";
+import Marker from "./Marker";
 
 function emptyBoard(size) {
   const board = [];
@@ -127,16 +128,18 @@ function TicTacToe({}) {
   useEffect(() => {
     if (currentPlayer !== "x" && currentPlayer !== null) {
       console.log(currentPlayer);
-      setBoard((prevBoard) => {
-        if (!prevBoard) {
-          return prevBoard;
-        }
-        const newBoard = [...prevBoard];
-        // const {x,y} = getMinimaxRobotMove(newBoard)
-        const { x, y } = easyRobotMove(board);
-        newBoard[y][x] = currentPlayer;
-        return newBoard;
-      });
+      setTimeout(() => {
+        setBoard((prevBoard) => {
+          if (!prevBoard) {
+            return prevBoard;
+          }
+          const newBoard = [...prevBoard];
+          // const {x,y} = getMinimaxRobotMove(newBoard)
+          const { x, y } = easyRobotMove(board);
+          newBoard[y][x] = currentPlayer;
+          return newBoard;
+        });
+      }, 300);
     }
   }, [currentPlayer]);
 
@@ -156,10 +159,13 @@ function TicTacToe({}) {
       <div className="board">
         {board.map((row, y) => {
           return row.map((tile, x) => {
+            {
+              console.log(tile);
+            }
             return (
               <div className="tile" key={`${x},${y}`}>
                 <button onClick={() => handlePlaceMark({ x, y })}>
-                  {tile}
+                  <Marker player={tile} />
                 </button>
               </div>
             );
