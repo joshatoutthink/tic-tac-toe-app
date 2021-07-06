@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import "./styles.css";
+
 import { getRobotMove, getMinimaxRobotMove } from "./robot.js";
+import PlayersInfo from "./PlayersInfo";
 import Marker from "./Marker";
+import Settings from "./Settings";
+import Stats from "./Stats";
+import Difficulty from "./Difficulty";
 
 function emptyBoard(size) {
   const board = [];
@@ -70,6 +74,8 @@ function checkWinner(board) {
   }
 }
 
+const INITIAL_GAME_SETTINGS = {};
+
 const ROBOT_IS_PLAYING = false;
 
 //==
@@ -79,7 +85,7 @@ function TicTacToe({}) {
   const [board, setBoard] = useState(() => emptyBoard(3));
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [gameWinner, setGameWinner] = useState(null);
-
+  const [gameSettings, setGameSettings] = useState(INITIAL_GAME_SETTINGS);
   function placeMark({ x, y }) {
     setBoard((prev) => {
       const newBoard = [...prev];
@@ -143,18 +149,11 @@ function TicTacToe({}) {
     }
   }, [currentPlayer]);
 
-  return (
-    <div className="board-wrapper">
-      {gameWinner && <ShowWinner winner={gameWinner} />}
+  const ref = React.useRef(null);
 
-      {!gameWinner && currentPlayer ? (
-        <p>
-          Current Player:{" "}
-          <span>{currentPlayer == "x" ? "Player 1 (X)" : "Player 2 (O)"}</span>
-        </p>
-      ) : (
-        <p></p>
-      )}
+  return (
+    <div className="board-wrapper" ref={ref}>
+      {gameWinner && <ShowWinner winner={gameWinner} />}
 
       <div className="board">
         {board.map((row, y) => {
@@ -172,8 +171,12 @@ function TicTacToe({}) {
           });
         })}
       </div>
-
       <button onClick={resetBoard}>Reset Board</button>
+      <Settings parentRefContainer={ref}>
+        <PlayersInfo info={{ name: "human", active: currentPlayer }} />
+        <Stats />
+        <Difficulty />
+      </Settings>
     </div>
   );
 }

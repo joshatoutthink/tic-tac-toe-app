@@ -4,8 +4,16 @@ import { motion } from "framer-motion";
 export default function Marker({ player }) {
   return (
     <div>
-      <svg viewBox="0 0 100 100" stroke="white" strokeWidth="2" fill="none">
-        {player === "x" ? <X /> : player === "o" ? <O /> : null}
+      <svg
+        viewBox="0 0 100 100"
+        stroke="floralwhite"
+        strokeWidth="2"
+        fill="none"
+        style={{ filter: "drop-shadow(0 0 30px black)" }}
+      >
+        <MotionMarker key={player} dir={player == "o" ? -1 : 1}>
+          {player === "x" ? <X /> : player === "o" ? <O /> : ""}
+        </MotionMarker>
       </svg>
     </div>
   );
@@ -30,16 +38,17 @@ function MotionMarker({ children, dir = 1 }) {
 
 function X() {
   return (
-    <MotionMarker>
+    <>
       <path d="M1,1 L99,99" />
       <path d="M99,1 L1,99" />
-    </MotionMarker>
+    </>
   );
 }
 function O() {
   return (
-    <MotionMarker dir={-1}>
+    <>
       <circle cx="50" cy="50" r="48" />
-    </MotionMarker>
+    </>
   );
 }
+export { X, O };
