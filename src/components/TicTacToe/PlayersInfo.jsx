@@ -1,6 +1,6 @@
 import React from "react";
 import { X, O } from "./Marker";
-import "./players-info.css";
+
 export default function PlayersInfo({ info }) {
   return (
     <div className="players-info">

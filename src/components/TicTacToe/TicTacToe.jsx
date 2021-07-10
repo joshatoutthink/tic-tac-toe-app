@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { getRobotMove, getMinimaxRobotMove } from "./robot.js";
 import PlayersInfo from "./PlayersInfo";
@@ -74,7 +74,9 @@ function checkWinner(board) {
   }
 }
 
-const INITIAL_GAME_SETTINGS = {};
+const INITIAL_GAME_SETTINGS = {
+  difficulty: "easy",
+};
 
 const ROBOT_IS_PLAYING = false;
 
@@ -86,6 +88,9 @@ function TicTacToe({}) {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [gameWinner, setGameWinner] = useState(null);
   const [gameSettings, setGameSettings] = useState(INITIAL_GAME_SETTINGS);
+  const [gameScore, setGameScore] = useState({ wins: 0, losses: 0, ties: 0 });
+  const [blurAmount, setBlurAmount] = useState(0);
+
   function placeMark({ x, y }) {
     setBoard((prev) => {
       const newBoard = [...prev];
@@ -114,6 +119,7 @@ function TicTacToe({}) {
     setGameWinner(null);
     setBoard(() => emptyBoard(3));
     setCurrentPlayer(null);
+    setBlurAmount(0);
   }
 
   useEffect(() => {
@@ -128,6 +134,30 @@ function TicTacToe({}) {
       });
     } else {
       setGameWinner(gameResult);
+      setBlurAmount("20px");
+      setGameScore((prev) => {
+        if (gameResult == "x") {
+          console.log("updating score");
+          console.log("gameresult,", gameResult);
+          return {
+            ...prev,
+            wins: prev.wins + 1,
+          };
+        }
+        if (gameResult == "o") {
+          return {
+            ...prev,
+            losses: prev.losses + 1,
+          };
+        }
+
+        if (gameResult == "CAT") {
+          return {
+            ...prev,
+            ties: prev.ties + 1,
+          };
+        }
+      });
     }
   }, [board, setCurrentPlayer, checkWinner]);
 
@@ -140,8 +170,15 @@ function TicTacToe({}) {
             return prevBoard;
           }
           const newBoard = [...prevBoard];
-          // const {x,y} = getMinimaxRobotMove(newBoard)
-          const { x, y } = easyRobotMove(board);
+
+          // SELECT THE FUNCTION DEPENDING ON THE GAME SETTINGS
+          const { x, y } =
+            gameSettings.difficulty === "hard"
+              ? getMinimaxRobotMove(newBoard)
+              : gameSettings.difficulty === "medium"
+              ? getRobotMove(newBoard)
+              : easyRobotMove(board);
+
           newBoard[y][x] = currentPlayer;
           return newBoard;
         });
@@ -150,48 +187,69 @@ function TicTacToe({}) {
   }, [currentPlayer]);
 
   const ref = React.useRef(null);
-
+  const blurRef = useRef(null);
   return (
-    <div className="board-wrapper" ref={ref}>
-      {gameWinner && <ShowWinner winner={gameWinner} />}
-
-      <div className="board">
-        {board.map((row, y) => {
-          return row.map((tile, x) => {
-            {
-              console.log(tile);
-            }
-            return (
-              <div className="tile" key={`${x},${y}`}>
-                <button onClick={() => handlePlaceMark({ x, y })}>
-                  <Marker player={tile} />
-                </button>
-              </div>
-            );
-          });
-        })}
+    <>
+      <div
+        ref={blurRef}
+        style={{ ["--blur-overlay"]: blurAmount }}
+        className="blur"
+      ></div>
+      {gameWinner && <ShowWinner winner={gameWinner} resetBoard={resetBoard} />}
+      <div className="board-wrapper" ref={ref}>
+        <div className="board">
+          {board.map((row, y) => {
+            return row.map((tile, x) => {
+              {
+                console.log(tile);
+              }
+              return (
+                <div className="tile" key={`${x},${y}`}>
+                  <button onClick={() => handlePlaceMark({ x, y })}>
+                    <Marker player={tile} />
+                  </button>
+                </div>
+              );
+            });
+          })}
+        </div>
+        <button onClick={resetBoard}>Reset Board</button>
       </div>
-      <button onClick={resetBoard}>Reset Board</button>
       <Settings parentRefContainer={ref}>
         <PlayersInfo info={{ name: "human", active: currentPlayer }} />
-        <Stats />
-        <Difficulty />
+        <Stats score={gameScore} />
+        <Difficulty
+          handleSelectDifficulty={(e) => {
+            const { value } = e.target;
+            setGameSettings((gameSettings) => ({
+              ...gameSettings,
+              difficulty: value,
+            }));
+          }}
+          selectedDifficulty={gameSettings.difficulty}
+        />
       </Settings>
-    </div>
+    </>
   );
 }
 
 export default TicTacToe;
 
-function ShowWinner({ winner }) {
-  if (winner == "CAT") {
-    return <h2>CAT</h2>;
-  }
+function ShowWinner({ winner, resetBoard }) {
   return (
-    <>
-      <h2>
-        The Winner is: <span>{winner == "x" ? "Player 1" : "Player 2"}</span>
-      </h2>
-    </>
+    <div className="modal glass" style={{ textAlign: `center` }}>
+      <div className="winner-announcement" style={{ marginBottom: 20 }}>
+        The Winner is:
+        <div className="winner-name">
+          {winner == "x" ? "Human 🥳" : winner == "o" ? "Robot 🤖" : "A 🐈"}
+        </div>
+      </div>
+      <button
+        style={{ textAlign: `center`, margin: `0 auto` }}
+        onClick={resetBoard}
+      >
+        Reset Board
+      </button>
+    </div>
   );
 }
