@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1";
+const CACHE_NAME = "v3";
 const FILES = ["/"];
 
 self.oninstall = function (event) {
